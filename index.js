@@ -1,7 +1,7 @@
 const express = require('express.js')
 const bcrypt = require('bcrypt')
 const { initializeApp } = require('firebase/app')
-const { getFirestore, collection, getDoc, doc , setDoc } = require('firebase/firestore')
+const { getFirestore, collection, getDoc, doc , setDoc} = require('firebase/firestore')
 require('dotenv/config')
 
 // Configuracion de Firebase
@@ -12,7 +12,7 @@ const firebaseConfig = {
     storageBucket: "back-firebase-c84cc.appspot.com",
     messagingSenderId: "556731039471",
     appId: "1:556731039471:web:3ba8e173e6ff6d5b3da51a"
-  };
+  }
 
 // Inicializar BD con firebase
 const firebase = initializeApp(firebaseConfig)
@@ -86,6 +86,54 @@ app.get('/usuarios', (req, res) =>  {
       }
     })
   }
+})
+
+app.get('/usuarios', async (req, res)=> {
+  const colRef = collection(db, 'users')
+  const docsSnap = await getDocs(colRef)
+  let data = []
+  docsSnap.forEach(doc => {
+    data.push(doc.data())
+  })
+  res.json({
+    'alert': 'success',
+    data
+  })
+})
+
+app.post('/login', (req, res) => {
+  let { email, password } = req.body
+
+  if (!email.length || !password.length) {
+    return res.json({
+      'alert': 'no se han recibido los datos correctamente'
+    })
+  }
+
+  const user = collection(db, 'users')
+  getDoc(doc(users, email))
+  .then( user => {
+    if (!user.exists()){
+      return res.json({
+        'alert': 'Correo no registrado en la base de datos'
+      })
+    } else {
+      bcrypt.compare(password, user.data().password, (error, result) => {
+        if (result) {
+          let data = user.data()
+          res.json({
+            'alert': 'Success',
+            name: data.name,
+            email: data.email
+          })
+        } else {
+            return res.json({
+              'alert': 'Password Incorrecto'
+          })
+        }
+      })
+    }
+  })
 })
 
 const PORT = process.env.PORT || 19000
