@@ -52,6 +52,8 @@ const firebaseConfig = {
     } else {
       const users = collection(db, 'users')
 
+      //Ruta de usuarios
+      
       //verificar que el correo no exista en la collections
       getDoc(doc(users, email)).then( user =>{
         if(user.exists()) {
