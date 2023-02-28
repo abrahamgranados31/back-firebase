@@ -1,7 +1,7 @@
 const express = require('express')
 const bcrypt = require('bcrypt')
 const { initializeApp } = require('firebase/app')
-const { getFirestore, collection, getDoc, doc, setDoc, getDocs } = require('firebase/firestore')
+const { getFirestore, collection, getDoc, doc, setDoc, getDocs, deleteDoc, updateDoc } = require('firebase/firestore')
 require("dotenv/config")
 
 // Configuracion de Firebase
@@ -126,7 +126,63 @@ const firebaseConfig = {
       }
     })
   })
+
+  //Ruta borrar 
+  app.post('/delete', (req, res) => {
+    let {id} = req.body
+
+    deleteDoc (doc(collection(db, 'users'), id))
+    .then((response) => {
+      res.json ({
+        'alert': 'success'
+      })
+    })
+    .catch((error) => {
+      res.json({
+        'alert': error
+      })
+    })
+  })
   
+  //Actualizar
+app.post('/update', (req, res) => {
+    const {id ,name, lastname,  number} = req.body
+
+    //Validaciones de los datos
+    if(name.length < 3) {
+      res.json({
+        'alert': 'nombre requiere minimo 3 caracters'
+      })
+    } else if (lastname.length <3){
+      res.json({
+        'alert': 'nombre requiere minimo 3 caracters'})
+
+      } else if (!Number(number) || number.length < 10) {
+      res.json({
+        'alert': 'introduce un numero telefonico correcto'
+      })
+    } else {  
+      db.collection('users').doc(id)
+      const updateData = {
+        name,
+        lastname,
+        number
+      }
+      updateDoc (doc(db, 'users'), updateData, id)
+      .then((response) => {
+        res.json ({
+          'alert': 'success'
+        })
+      })
+      .catch((error) => {
+        res.json({
+          'alert': error
+        })
+      })
+    }
+  })
+
+
   const PORT = process.env.PORT || 19000
 
 
