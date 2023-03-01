@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-"scripts": {
+  "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index"
   },
@@ -20,6 +20,7 @@
   "homepage": "https://github.com/abrahamgranados31/back-firebase#readme",
   "dependencies": {
     "bcrypt": "^5.1.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express.js": "^1.0.0",
     "firebase": "^9.17.1"
